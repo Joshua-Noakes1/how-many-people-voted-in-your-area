@@ -107,7 +107,7 @@ function petitionLookup() {
             });
             $("#reloadButton").fadeIn(1525);
             // find our more button 
-            $("#learnmoreButton").text(`Find more information about the petition "${petitionData.data.attributes.action}"`);
+            $("#learnmoreButton").text(`${petitionData.data.attributes.action}`);
             $("#learnmoreButton").click(function () {
                 location = `https://petition.parliament.uk/petitions/${petitionID}`; // going to the petition
             });
