@@ -2,14 +2,9 @@
 $(document).ready(function () {
     // Hiding the second button on load. If we reuse the first button safari doesnt like it and tries to resubmit the json to gov
     $("#reloadButton").hide();
-    $("#learnmoreButton").hide();
 
     $("#lookupButton").click(function () {
         petitionLookup();
-    });
-
-    $("#reloadButton").click(function () {
-
     });
 });
 
@@ -29,23 +24,26 @@ function petitionLookup() {
         return;
     }
 
-    // Validating our postcode to make sure its actually a postcode
-    if (!postcodeIDRaw.match(/^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$/g)) {
-        alert("Please enter a valid UK Postcode");
-        return;
-    }
-
-
     // Removing the space from the input of the postcode
     var postcodeID = postcodeIDRaw.replace(/\s/g, '');
     // Spliting the petition to its core numbers
     var petitionID = petitionIDRaw.match(/\d+/g).map(Number)[0];
+
+    // Validating our postcode to make sure its actually a postcode
+    if (!postcodeID.match(/^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$/g)) {
+        alert("Please enter a valid UK Postcode");
+        return;
+    }
 
     // we use jquery to get the json data from the gov
     $.getJSON(`https://petition.parliament.uk/petitions/${petitionID}.json`).done(function (petitionData) {
         // checking if its an archived petition 
         if (petitionData.data.type == "archived-petition") {
             alert("This site doesn't support getting vote data from archived petitions");
+            return;
+        }
+        if (petitionData.data.attributes.state == "rejected") {
+            alert("This site doesn't support rejected petitions");
             return;
         }
         // Fading anything that doesnt need to be on screen
@@ -94,11 +92,24 @@ function petitionLookup() {
                     var first_3 = signs.substring(0, 3);
                     var via_full_count = `${first_3},000,000`;
                     break;
+                default:
+                    var via_full_count = signs;
+                    break;
+            }
+
+            //checking if the area has signatures 
+            if (petitionData.data.attributes.signatures_by_constituency[array_county] == undefined) {
+                // we just do empty or 0 things if it doesnt
+                var county_sigs_count = '0';
+                var county_sigs_mp = 'We can\'t find your constituent\'s Member of Parliament';
+            } else {
+                var county_sigs_count = petitionData.data.attributes.signatures_by_constituency[array_county].signature_count;
+                var county_sigs_mp = `Your constituent's Member Of Parliament is "${petitionData.data.attributes.signatures_by_constituency[array_county].mp}"`;
             }
             // gathering the data from the gov using the id in the array 
-            $("#votesinarea").text(`${petitionData.data.attributes.signatures_by_constituency[array_county].signature_count} out of the ${via_full_count} votes for "${petitionData.data.attributes.action}" are from "${petitionData.data.attributes.signatures_by_constituency[array_county].name}"`);
+            $("#votesinarea").text(`${county_sigs_count} out of the ${via_full_count} votes for "${petitionData.data.attributes.action}" are from "${postcodeData.data.attributes.ward_name}"`);
             // saying the name of the mp incase someone wanted to talk to them 
-            $("#MemberOfParliament").text(`Your constituent's Member Of Parliament is "${petitionData.data.attributes.signatures_by_constituency[array_county].mp}"`)
+            $("#MemberOfParliament").text(county_sigs_mp);
             // bottom button row
             // reload button
             $("#reloadButton").text(`Check another petition`);
@@ -106,12 +117,6 @@ function petitionLookup() {
                 location.reload(true); // reload(true) | safari is horrible for javascript please dont judge this 
             });
             $("#reloadButton").fadeIn(1525);
-            // find our more button 
-            $("#learnmoreButton").text(`${petitionData.data.attributes.action}`);
-            $("#learnmoreButton").click(function () {
-                location = `https://petition.parliament.uk/petitions/${petitionID}`; // going to the petition
-            });
-            $("#learnmoreButton").fadeIn(1525);
         }).fail(function () {
             // findthatpostcodeuk could be bad and it could stop working
             alert(`We've failed to load data about ${postcodeID}\nAre you sure it exists?`);
