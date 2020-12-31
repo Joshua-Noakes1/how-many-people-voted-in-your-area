@@ -66,32 +66,27 @@ function petitionLookup() {
                 case 4:
                     // below is getting 5 from 5,367 | 1000
                     var first_3 = signs.substring(0, 1);
-                    var via_full_count = `${first_3}000`
+                    var last_3 = signs.substring(1, 4);
+                    var via_full_count = `${first_3},${last_3}`;
                     break;
                 case 5:
                     // 10,000
                     var first_3 = signs.substring(0, 2);
-                    var via_full_count = `${first_3},000`;
+                    var last_3 = signs.substring(2, 5);
+                    var via_full_count = `${first_3},${last_3}`;
                     break;
                 case 6:
                     // 100,000
                     var first_3 = signs.substring(0, 3);
-                    var via_full_count = `${first_3},000`;
+                    var last_3 = signs.substring(3, 6);
+                    var via_full_count = `${first_3},${last_3}`;
                     break;
                 case 7:
                     // 1,000,000
                     var first_3 = signs.substring(0, 1);
-                    var via_full_count = `${first_3},000,000`;
-                    break;
-                case 8:
-                    // 10,000,000
-                    var first_3 = signs.substring(0, 2);
-                    var via_full_count = `${first_3},000,000`;
-                    break;
-                case 9:
-                    // 100,000,000
-                    var first_3 = signs.substring(0, 3);
-                    var via_full_count = `${first_3},000,000`;
+                    var last_3 = signs.substring(1, 4);
+                    var last_3_2 = signs.substring(4, 7);
+                    var via_full_count = `${first_3},${last_3},${last_3_2}`;
                     break;
                 default:
                     var via_full_count = signs;
