@@ -1,5 +1,6 @@
 // on load stuff 
 $(document).ready(function () {
+    console.log(`Running on Github Pages\nhttps://whovoted.joshuanoakes.co.uk/\n\nVersion: 1.0.2`)
     // Hiding the second button on load. If we reuse the first button safari doesnt like it and tries to resubmit the json to gov
     $("#reloadButton").hide();
 
