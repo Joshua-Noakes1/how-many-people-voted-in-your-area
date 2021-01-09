@@ -1,3 +1,4 @@
 # How many people voted in your area?
-## TODO
- - Write a readme
+## About
+What is "How many people voted in your area?" about?   
+hmpv is a website  
